@@ -1,0 +1,22 @@
+{
+  "name": "bid-nextjs-example",
+  "private": true,
+  "type": "module",
+  "description": "Den app der beviser Next.js-halvdelen af docs/BRUG-BID.md. Egen package.json med vilje: BID må ikke afhænge af @broberg/sso — og slet ikke af Next.js.",
+  "scripts": {
+    "dev": "next dev -p 8124",
+    "build": "next build",
+    "start": "next start -p 8124"
+  },
+  "dependencies": {
+    "@broberg/sso": "0.3.0",
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.6.0"
+  }
+}

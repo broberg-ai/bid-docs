@@ -1,0 +1,14 @@
+{
+  "name": "bid-minimal-app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The app that proves docs/BRUG-BID.md. Its own package.json on purpose: BID must not depend on @broberg/sso.",
+  "scripts": {
+    "dev": "bun run ../../scripts/fikstur-app.ts"
+  },
+  "dependencies": {
+    "@broberg/sso": "0.3.0",
+    "hono": "^4.6.14"
+  }
+}
