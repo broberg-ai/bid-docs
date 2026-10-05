@@ -628,6 +628,26 @@ login eller refresh — læs `GET /api/app/profile` når kontosiden vises.
 telefoner, tilsluttede logins og sletning af kontoen. Link til `account_url` i
 en ny fane.
 
+## 5b⅓. Forny adgangen i baggrunden — fornyelses-tokens (F084.156)
+
+Et `access_token` fra BID gælder i **1 time** (`expires_in: 3600`). Uden mere
+skal brugeren gennem login igen bagefter (et klik på «Fortsæt som …»).
+
+**Vil appen forny i baggrunden** (fx med `@broberg/sso` 0.9.0's `tokenStore`),
+skal den have et `refresh_token`, og det kræver scopet `offline_access`:
+
+1. `offline_access` skal stå i din registrering (spec'ens `scopes`) — bed BID om det.
+2. Bed om det ved login: `scope=openid profile email offline_access`.
+
+**En fornyelses-nøgle dør med brugerens login i BID.** Logger hun ud, trykker
+«log ud overalt», skifter kode, eller udløber login'et, svarer
+`POST /oauth2/token` (grant_type=refresh_token) `400 invalid_grant` — send
+hende til login (uden `prompt`). Det gælder OGSÅ for `offline_access`, selvom
+OIDC ellers lader den slags overleve et log ud: hos BID betyder log ud log ud.
+
+**Rotation:** hver fornyelse giver en NY nøgle; gem den og smid den gamle væk.
+Bruges en gammel nøgle igen (efter et kort vindue), tilbagekaldes hele kæden.
+
 ## 5b½. Afviser du en bruger — send hende til BID's side, vis aldrig din egen
 
 Har brugeren et gyldigt Broberg ID, men ingen adgang til DIN app (ikke på din
