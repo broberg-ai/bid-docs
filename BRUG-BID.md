@@ -592,6 +592,42 @@ Svaret har tre udfald, og de betyder hver sin ting:
 - `unverified` må aldrig behandles som ejet: enhver kan skrive en adresse ind på
   sin egen konto. Det er bekræftelsen der beviser den.
 
+## 5b¼. Konto-side i appen — brugeren retter navn og billede uden at forlade appen (F084.151)
+
+Christian 5/10: det er forstyrrende pludselig at havne i et ID-system. Så appen
+viser kontoen selv, og retter navn og billede gennem BID. Alt kaldes fra appens
+**server** med brugerens `access_token` fra login:
+
+| kald | kræver scope | gør |
+|---|---|---|
+| `GET /api/app/profile` | `profile` | `{sub, name, picture, email, account_url}` |
+| `POST /api/app/profile` `{"name":"…"}` | `profile:write` | retter navnet (1–120 tegn) |
+| `POST /api/app/profile/avatar` (rå bytes) | `profile:write` | nyt billede — max 2 MB, PNG/JPEG/WebP, genkendt på bytes |
+| `POST /api/app/profile/avatar/remove` | `profile:write` | fjerner billedet |
+
+**`profile:write` er sit eget scope, med vilje.** `profile` er et LÆSE-scope og
+forbliver det. For at rette skal `profile:write` stå i din registrering
+(spec'ens `scopes`: `["openid","profile","email","profile:write"]`), og appen
+skal bede om det ved login (`scope=openid profile email profile:write`). Beder
+en app om det uden at være registreret med det, afviser BID login'et med
+`invalid_scope`.
+
+**Kun brugerens EGEN profil.** Hvem der rettes, afgøres af tokenet — der findes
+ingen parameter der kan pege på en anden, og et `sub` i kroppen læses aldrig.
+
+**Svarene:** `401 invalid_token` (manglende/udløbet/tilbagekaldt token) ·
+`403 insufficient_scope` med `scope` (hvilket der mangler) · `400` med `name_required`,
+`name_too_long` eller `name_must_be_a_string` · `413 too_large` · `415 not_an_image`.
+Et vellykket kald svarer med profilen læst tilbage fra basen.
+
+**Friskhed:** svaret bærer den nye værdi straks, og `/oauth2/userinfo` viser den
+med det samme. Et id_token der allerede er udstedt, bærer den gamle til næste
+login eller refresh — læs `GET /api/app/profile` når kontosiden vises.
+
+**Bliver i BID:** mail, adgangskode, adgangsnøgler, tofaktor, sessioner,
+telefoner, tilsluttede logins og sletning af kontoen. Link til `account_url` i
+en ny fane.
+
 ## 5b½. Afviser du en bruger — send hende til BID's side, vis aldrig din egen
 
 Har brugeren et gyldigt Broberg ID, men ingen adgang til DIN app (ikke på din
