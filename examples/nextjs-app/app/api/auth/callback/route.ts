@@ -57,19 +57,19 @@ export async function GET(request: Request) {
     maxAgeSeconds: FLOW_MAX_AGE,
   });
   if (!flowJson) {
-    // DEN ANKOM, men holder ikke. To vidt forskellige årsager, og de skal
-    // ikke have samme svar: holder SIGNATUREN, er det vores egen cookie der
-    // bare er for gammel — hun var for længe undervejs. Holder den ikke, er
-    // det ikke en cookie vi har udstedt.
+    // DEN ANKOM, men holder ikke. Browseren får ÉT svar, uanset om den er
+    // for gammel eller slet ikke vores (@broberg/sso 0.12.0, Christian 7/10).
+    // Et særskilt «for gammel» fortalte en fremmed at en fundet cookies
+    // signatur holdt mod den nuværende hemmelighed (helpdesk 22/9, F084.55).
+    // ÅRSAGEN går kun i serverens log — dér hjælper den driften, og dér kan
+    // ingen udefra læse den.
     //
-    // Det er hele grunden til at cookien lever længere end vinduet: en cookie
-    // browseren har smidt væk ankommer aldrig, og så står vi tilbage med
-    // «intet login i gang» på et login der faktisk var i gang.
-    const signaturHolder = (await verifyValue(flowCookie, config.cookieSecret)) !== null;
-    const afvist = NextResponse.redirect(
-      new URL(signaturHolder ? "/?error=login_expired" : "/?error=bad_login_cookie", url.origin),
-      302,
-    );
+    // Cookien lever stadig længere end vinduet: en cookie browseren har smidt
+    // væk ankommer aldrig, og så stod vi tilbage med «intet login i gang» på
+    // et login der faktisk var i gang.
+    const aarsag = (await verifyValue(flowCookie, config.cookieSecret)) !== null ? "expired" : "bad_signature";
+    console.warn(`[callback] login-cookie afvist: ${aarsag}`);
+    const afvist = NextResponse.redirect(new URL("/?error=login_failed", url.origin), 302);
     // RYD DEN. Cookien lever tre gange længere end vinduet, netop så den når
     // frem og kan navngives — men når den ér navngivet, er den færdig. Lader
     // man den ligge, svarer hvert eneste forsøg de næste tyve minutter det

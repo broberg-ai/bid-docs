@@ -411,11 +411,18 @@ du kan svare på hvad der gik galt:
 ```
 
 ```ts
-    const signaturHolder = (await verifyValue(flowCookie, config.cookieSecret)) !== null;
+    const aarsag = (await verifyValue(flowCookie, config.cookieSecret)) !== null ? "expired" : "bad_signature";
+    console.warn(`[callback] login-cookie afvist: ${aarsag}`);
+    const afvist = NextResponse.redirect(new URL("/?error=login_failed", url.origin), 302);
 ```
 
 Holder signaturen, er det din egen cookie der bare er for gammel. Holder den
-ikke, er det slet ikke en cookie du har udstedt. Tre tilstande, tre svar.
+ikke, er det slet ikke en cookie du har udstedt. **Den forskel skriver du i din
+egen log — browseren får ét svar, `login_failed`, for begge.** Et særskilt
+«for gammel» fortæller en fremmed at signaturen holdt mod din nuværende
+hemmelighed (helpdesk 22/9, F084.55), og det er valgt fra (Christian 7/10,
+`@broberg/sso` 0.12.0). «Ingen cookie» (`no_login_in_progress`) er stadig sit
+eget svar: det røber intet om signaturen.
 
 **Det er ikke en teori.** helpdesk ramte det i praksis, og `@broberg/sso`
 rettede samme form i sin egen Hono-adapter i 0.3.0 — to konstanter, hvor
@@ -789,8 +796,7 @@ ikke uden at måle.
 | «Missing required client credentials» fra token-endepunktet | klienten er registreret som confidential, men dit bibliotek sender ingen hemmelighed — kræver `@broberg/sso` 0.2.0+ | **appen** |
 | «The client is not allowed to initiate logout» | `enableEndSession` mangler på rækken | **BID** |
 | `no_login_in_progress` fra **adapterens** `/auth/callback` | der kom ingen flow-cookie. Hun har ikke startet et login her — eller browseren har smidt cookien væk for længst | **appen** |
-| `login_expired` | cookien kom, signaturen holder, men den er ældre end serverens vindue. **Hun var for længe undervejs** — bed hende logge ind igen | **appen** |
-| `bad_login_cookie` | cookien kom, men signaturen holder ikke. Det er ikke en cookie I har udstedt | **appen** |
+| `login_failed` (400, fra `@broberg/sso` 0.12.0) | cookien kom, men holder ikke — enten for gammel (hun var for længe undervejs) eller ikke en cookie I har udstedt. **Browseren får med vilje ét svar for begge**; bed hende logge ind igen. Årsagen står i jeres log (`onCallbackRefused(cause, c)` eller `[@broberg/sso] /callback refused: <cause>`). Til og med 0.11.0 hed de to `login_expired` og `bad_login_cookie` — et særskilt «for gammel» fortalte en fremmed at signaturen holdt (F084.55), så det er valgt fra (Christian 7/10). `callbackErrors: "granular"` findes, men lad være | **appen** |
 
 ### De to fælder i tabellen
 
