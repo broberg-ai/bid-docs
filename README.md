@@ -2,12 +2,13 @@
 
 > **Automatisk kopi — redigér ikke her.** Alt i dette repo genereres fra
 > Broberg ID's eget (private) repo ved hver ændring. Rettelser foreslås til
-> Broberg ID, ikke som pull requests her. Kopieret fra `broberg-id@48432c1`.
+> Broberg ID, ikke som pull requests her. Kopieret fra `broberg-id@8e7f868`.
 
 | | |
 |---|---|
 | **Kobl en app på Broberg ID** | [BRUG-BID.md](BRUG-BID.md) · læses bedst på <https://id.broberg.ai/docs> |
 | **Flyt en app fra sit eget login** | [MIGRERING.md](MIGRERING.md) · <https://id.broberg.ai/docs/migrering> |
+| **Tal med en anden tjeneste uden nøgle (BID-billetter)** | [BILLETTER.md](BILLETTER.md) · eksempel i [examples/billet](examples/billet) |
 | **Til AI-assistenter** | <https://id.broberg.ai/llms.txt> · <https://id.broberg.ai/llms-migrering.txt> |
 | **Eksempel: Hono (Bun)** | [examples/minimal-app](examples/minimal-app) |
 | **Eksempel: Next.js** | [examples/nextjs-app](examples/nextjs-app) |

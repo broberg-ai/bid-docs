@@ -1,0 +1,10 @@
+{
+  "name": "bid-billet-eksempel",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Eksemplerne bag docs/BILLETTER.md (F087.11). Egen package.json med vilje: BID afhænger ikke af @broberg/sso.",
+  "dependencies": {
+    "@broberg/sso": "0.14.1"
+  }
+}
