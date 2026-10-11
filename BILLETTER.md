@@ -2,7 +2,7 @@
 
 **Kort:** En tjeneste i flåden beviser hvem den er med det bevis den allerede
 har (Fly giver hver maskine et; GitHub giver hvert CI-job et), bytter det hos
-Broberg ID til en **billet** der gælder 5 minutter og kun til ÉN modtager, og
+BrobergID til en **billet** der gælder 5 minutter og kun til ÉN modtager, og
 sender billetten med sit kald. Ingen nøgle i `.env`, ingen Fly-hemmelighed,
 intet at lække.
 

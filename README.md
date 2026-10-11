@@ -1,12 +1,12 @@
-# Broberg ID — vejledninger og eksempler
+# BrobergID — vejledninger og eksempler
 
 > **Automatisk kopi — redigér ikke her.** Alt i dette repo genereres fra
-> Broberg ID's eget (private) repo ved hver ændring. Rettelser foreslås til
-> Broberg ID, ikke som pull requests her. Kopieret fra `broberg-id@8e7f868`.
+> BrobergID's eget (private) repo ved hver ændring. Rettelser foreslås til
+> BrobergID, ikke som pull requests her. Kopieret fra `broberg-id@ec21a82`.
 
 | | |
 |---|---|
-| **Kobl en app på Broberg ID** | [BRUG-BID.md](BRUG-BID.md) · læses bedst på <https://id.broberg.ai/docs> |
+| **Kobl en app på BrobergID** | [BRUG-BID.md](BRUG-BID.md) · læses bedst på <https://id.broberg.ai/docs> |
 | **Flyt en app fra sit eget login** | [MIGRERING.md](MIGRERING.md) · <https://id.broberg.ai/docs/migrering> |
 | **Tal med en anden tjeneste uden nøgle (BID-billetter)** | [BILLETTER.md](BILLETTER.md) · eksempel i [examples/billet](examples/billet) |
 | **Til AI-assistenter** | <https://id.broberg.ai/llms.txt> · <https://id.broberg.ai/llms-migrering.txt> |
@@ -16,6 +16,6 @@
 Eksemplerne er de apps vejledningen er skrevet ud fra. Klientpakken er
 [`@broberg/sso`](https://www.npmjs.com/package/@broberg/sso).
 
-Scripts eksemplerne nævner (fx `scripts/fikstur-*.ts`) starter en lokal Broberg ID
-og findes kun i det private repo. Mod en rigtig Broberg ID skal din app være
+Scripts eksemplerne nævner (fx `scripts/fikstur-*.ts`) starter en lokal BrobergID
+og findes kun i det private repo. Mod en rigtig BrobergID skal din app være
 registreret som klient — se afsnittet «Registrér appen» i vejledningen.
