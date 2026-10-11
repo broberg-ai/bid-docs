@@ -716,9 +716,13 @@ POST /api/app/invitations
 Authorization: Bearer bidk_…
 Content-Type: application/json
 
-{ "customerName": "Firma A/S", "appUrl": "https://app.example/", 
+{ "customerName": "Firma A/S", "appUrl": "https://app.example/", "lang": "da",
   "users": [ { "email": "bo@firma.dk", "name": "Bo Berg" } ] }
 ```
+
+`lang` (`"da"` eller `"en"`, valgfri, standard `"da"`) er sproget i mailen til en
+adresse UDEN BrobergID. Har adressen allerede en konto, bruges kontoens eget
+sprog. Et andet sprog → `400 {"error":"invalid_lang"}`, intet sendt.
 
 Svaret er pr. adresse: `invited` (med `mailId`) · `already_invited` (en levende
 invitation findes — INTET sendt) · `existing` (har allerede et BrobergID —

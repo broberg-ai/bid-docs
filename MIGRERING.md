@@ -194,6 +194,8 @@ Content-Type: application/json
 
 - `appUrl` skal ligge på et af appens **registrerede** domæner, ellers afvises
   adressen som `invalid`.
+- `lang` (`"da"`/`"en"`, valgfri, standard `"da"`): sproget i mailen til en
+  adresse uden BrobergID. En kendt konto får sit eget sprog.
 - Svaret er pr. adresse: `invited` · `already_invited` · `existing` (har
   allerede et BrobergID — intet sendt) · `invalid` · `too_soon` /
   `too_many_today`. Kaldet kan gentages uden at nogen får to mails. Højst 500

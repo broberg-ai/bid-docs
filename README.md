@@ -2,7 +2,7 @@
 
 > **Automatisk kopi — redigér ikke her.** Alt i dette repo genereres fra
 > BrobergID's eget (private) repo ved hver ændring. Rettelser foreslås til
-> BrobergID, ikke som pull requests her. Kopieret fra `broberg-id@ec21a82`.
+> BrobergID, ikke som pull requests her. Kopieret fra `broberg-id@dc521ab`.
 
 | | |
 |---|---|
