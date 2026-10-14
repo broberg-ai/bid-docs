@@ -1,4 +1,4 @@
-# Kobl din app på BrobergID
+# Kobl din app på BID
 
 Denne vejledning er skrevet ud fra [`examples/minimal-app/`](https://github.com/broberg-ai/bid-docs/tree/main/examples/minimal-app) — en app der aldrig
 havde været koblet på, og som blev det ved at følge trinnene herunder. Hver
@@ -24,7 +24,7 @@ det er betingelsen for at blive optaget (Christian, 28/9 2026: *«der findes kun
 1 udgave af login hos ALLE apps og det er en central»*). Som Microsofts login:
 den skifter ikke fra produkt til produkt.
 
-- **Appen viser ALDRIG en login-side. /login er en omdirigering direkte til BID — ingen side, ingen knap, intet «Log ind med BrobergID».**
+- **Appen viser ALDRIG en login-side. /login er en omdirigering direkte til BID — ingen side, ingen knap, intet «Log ind med BID».**
   /login og enhver side der kræver login sender brugeren videre via `@broberg/sso`'s
   login-rute med et fuldt sideskift. En side der LINKER til dialogen er stadig appens
   egen login-side. Ingen iframe — BID kan ikke vises i en ramme, og adgangsnøgler
@@ -553,7 +553,7 @@ Next.js-eksemplet. Åbn appen og log ind med den bruger scriptet printer.
     }
 ```
 
-Linket hedder «Log ind», ikke «Log ind med BrobergID»: det er en offentlig
+Linket hedder «Log ind», ikke «Log ind med BID»: det er en offentlig
 forside, ikke en login-side, og `/auth/login` er en omdirigering direkte til BID.
 Der findes intet at vælge imellem, så der er ingen knap der navngiver et valg.
 
@@ -587,7 +587,7 @@ Svaret har tre udfald, og de betyder hver sin ting:
 | `status` | hvad din app gør |
 |---|---|
 | `verified` | kontoen ejer adressen, bevist → indløs invitationen på tokenets `sub` |
-| `unverified` | adressen står på kontoen, men er ikke bekræftet → indløs IKKE; «bekræft adressen i BrobergID» |
+| `unverified` | adressen står på kontoen, men er ikke bekræftet → indløs IKKE; «bekræft adressen i BID» |
 | `not_on_account` | → indløs IKKE; «du er logget ind med en anden konto» |
 
 - **Kun om den konto tokenet tilhører.** Uden gyldigt token svarer ruten `401
@@ -657,7 +657,7 @@ Bruges en gammel nøgle igen (efter et kort vindue), tilbagekaldes hele kæden.
 
 ## 5b½. Afviser du en bruger — send hende til BID's side, vis aldrig din egen
 
-Har brugeren et gyldigt BrobergID, men ingen adgang til DIN app (ikke på din
+Har brugeren et gyldigt BID, men ingen adgang til DIN app (ikke på din
 liste, ikke inviteret), så redirect til:
 
 ```
@@ -679,7 +679,7 @@ hans anden.
 ## 5c. Flyt dine brugere — og bevis at ALLE er flyttet, før det gamle login slukkes
 
 Den 29/9 2026 stod en redaktør låst ude af CMS: appens gamle login var slukket,
-og hun havde endnu intet BrobergID. Det her er vejen der gør det umuligt.
+og hun havde endnu intet BID. Det her er vejen der gør det umuligt.
 
 **Din app får sin egen nøgle til BID** (`bidk_…`), udstedt af broberg-id og
 leveret gennem vaulten. Den er IKKE din `client_secret` og IKKE et brugertoken.
@@ -704,7 +704,7 @@ Content-Type: application/json
 
 | `state` | betyder | du gør |
 |---|---|---|
-| `ready` | adressen er BEKRÆFTET på et BrobergID — din callback kan koble hende | intet |
+| `ready` | adressen er BEKRÆFTET på et BID — din callback kan koble hende | intet |
 | `invited` | invitation sendt, ikke indløst endnu (`expiresAt`) | vent |
 | `expired` | invitationen udløb ubrugt | invitér igen |
 | `not_invited` | ingen konto, ingen invitation fra DIN app | invitér |
@@ -721,13 +721,13 @@ Content-Type: application/json
 ```
 
 `lang` (`"da"` eller `"en"`, valgfri, standard `"da"`) er sproget i mailen til en
-adresse UDEN BrobergID. Har adressen allerede en konto, bruges kontoens eget
+adresse UDEN BID. Har adressen allerede en konto, bruges kontoens eget
 sprog. Et andet sprog → `400 {"error":"invalid_lang"}`, intet sendt.
 
 Svaret er pr. adresse: `invited` (med `mailId`) · `already_invited` (en levende
-invitation findes — INTET sendt) · `existing` (har allerede et BrobergID —
+invitation findes — INTET sendt) · `existing` (har allerede et BID —
 intet sendt) · `invalid` (se `problem`) · `too_soon`/`too_many_today`. Kaldet
-kan gentages uden at nogen får to mails. BID sender mailen som «BrobergID»
+kan gentages uden at nogen får to mails. BID sender mailen som «BID»
 med kopi til huset. Højst 500 brugere pr. kald.
 
 **3. Spørg igen, og skift FØRST når `complete` er `true`.** Imens står det gamle

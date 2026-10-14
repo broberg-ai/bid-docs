@@ -1,7 +1,7 @@
-# Fra dit eget login til BrobergID — migreringsguiden
+# Fra dit eget login til BID — migreringsguiden
 
 Til den der skal flytte en app, der i dag har sit EGET login (NextAuth med
-magic-link eller GitHub, en adgangskode, `@broberg/auth`), over på BrobergID
+magic-link eller GitHub, en adgangskode, `@broberg/auth`), over på BID
 (BID). Guiden er rækkefølgen og beslutningerne. Selve ledningen — pakke, miljø,
 ruter — står i vejledningen <https://id.broberg.ai/docs>, og der henvises dertil
 i stedet for at gentage den.
@@ -15,7 +15,7 @@ i stedet for at gentage den.
 
 **Én login-dialog: BID's. Din app har ingen egen.**
 
-- **Appen viser ALDRIG en login-side. /login er en omdirigering direkte til BID — ingen side, ingen knap, intet «Log ind med BrobergID».**
+- **Appen viser ALDRIG en login-side. /login er en omdirigering direkte til BID — ingen side, ingen knap, intet «Log ind med BID».**
 - Ingen egen formular: ingen adgangskode, ingen adgangsnøgle, intet
   GitHub/Google, intet login-link.
 - **BID som én af flere login-muligheder er IKKE optagelse.** En
@@ -133,7 +133,7 @@ Content-Type: application/json
 | `status` | gør |
 |---|---|
 | `verified` | kobl: gem `sub` → din bruger-række |
-| `unverified` | kobl IKKE. Hun skal bekræfte adressen i BrobergID |
+| `unverified` | kobl IKKE. Hun skal bekræfte adressen i BID |
 | `not_on_account` | kobl IKKE. Send til `https://id.broberg.ai/no-access?client_id=<dit id>` |
 
 Mønsteret (Contracts F008.1, gennemset af broberg-id 2/10):
@@ -158,7 +158,7 @@ Redirect med en navngivet årsag, aldrig en 500.
 
 ## 5. Porten: migration-status
 
-Før skiftet skal HVER bruger have et BrobergID med sin adresse bekræftet.
+Før skiftet skal HVER bruger have et BID med sin adresse bekræftet.
 Ellers står de udenfor den dag `/login` peger på BID — det skete for en
 redaktør i CMS den 29/9 2026.
 
@@ -176,7 +176,7 @@ Svaret har `users[]` (pr. adresse en `state`), `counts` og `complete`.
 
 | `state` | gør |
 |---|---|
-| `ready` | intet — adressen er bekræftet på et BrobergID |
+| `ready` | intet — adressen er bekræftet på et BID |
 | `invited` | vent (`expiresAt` siger hvornår invitationen udløber) |
 | `expired` | invitér igen |
 | `not_invited` | invitér |
@@ -195,9 +195,9 @@ Content-Type: application/json
 - `appUrl` skal ligge på et af appens **registrerede** domæner, ellers afvises
   adressen som `invalid`.
 - `lang` (`"da"`/`"en"`, valgfri, standard `"da"`): sproget i mailen til en
-  adresse uden BrobergID. En kendt konto får sit eget sprog.
+  adresse uden BID. En kendt konto får sit eget sprog.
 - Svaret er pr. adresse: `invited` · `already_invited` · `existing` (har
-  allerede et BrobergID — intet sendt) · `invalid` · `too_soon` /
+  allerede et BID — intet sendt) · `invalid` · `too_soon` /
   `too_many_today`. Kaldet kan gentages uden at nogen får to mails. Højst 500
   pr. kald.
 
@@ -276,7 +276,7 @@ ikke; de bruges igen ved næste skift.
 | egen login-side med en BID-knap «i overgangen» | Contracts (F084.140) | tilstand A har INGEN BID-knap; `/login` bliver en 302 |
 | en kobling giver adgang for altid | Contracts' første udkast (2/10) | kendt `sub` → tjek stadig adgangen |
 | tokenets `email` brugt til at matche | flere apps; en afviste ejeren selv (30/9) | address-ownership |
-| det gamle login slukket før alle havde et BrobergID | CMS (29/9) | migration-status `complete: true` først |
+| det gamle login slukket før alle havde et BID | CMS (29/9) | migration-status `complete: true` først |
 | callback-stien én skråstreg forkert | vejledningens fælde 1 | `invalid_redirect` EFTER brugeren har sagt ja — prøv i tilstand A |
 | Next.js-callback under `/api/auth/` men registreret uden | vejledningens fælde 5 | registrér den sti du bygger |
 | miljøvariablerne aldrig sat i drift | HelpDesk | en tom `BID_ISSUER` giver 503 fra din start-rute; tjek før skiftet |
