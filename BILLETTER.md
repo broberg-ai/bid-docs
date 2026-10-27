@@ -152,6 +152,39 @@ BID udsteder kun mens brugerens BID-login lever: efter log ud, «log ud
 overalt», ny kode eller udløb svarer den `subject_token_inactive`, og appen
 skal forny sit token — fejler fornyelsen også, så bed brugeren logge ind igen. En billet kan ikke veksles videre (`subject_is_ticket`).
 
+## 4c. På vegne af et menneske — samtykke (F087.40)
+
+En **agent** sender desuden `requested_subject=<mail eller bruger-id>` (og evt. `delegation_ttl` i sekunder, 3600–2592000; standard 30 dage).
+
+- Har mennesket ikke sagt ja: `400 consent_required` med `consent_uri` (gælder 10 min). Giv mennesket linket. BID sender intet selv.
+- Har hun sagt ja: billetten har `sub` = mennesket, `act.sub` = agenten, `principal_type: user`. Scopes = det hun gav ∩ agentens regel.
+- Hun kan trække det tilbage under Konto → Agenter (F087.42). Derefter: `consent_required` igen.
+
+## 4d. Som edge — en af ejerens maskiner med buddy (F087.50)
+
+En cc-session på en Mac (eller en anden edge) har intet platform-ID. I stedet beviser **edgen** sig med sin egen nøgle: buddy har ét ES256-nøglepar (P-256), den private del som `~/.buddy/edge-identity.key` (mode 600), og BID kender kun den offentlige (registreret med `agent-registry.ts edge-key`).
+
+Påstanden buddy signerer (ES256), sendt som `subject_token` med `subject_token_type=urn:ietf:params:oauth:token-type:jwt`:
+
+```text
+header:  { "alg": "ES256" }
+payload: {
+  "iss": "edge:<navn>",          // fx edge:m1, edge:cb-2 — samme som sub
+  "sub": "edge:<navn>",
+  "aud": "https://id.broberg.ai",
+  "iat": <nu>,
+  "exp": <højst iat + 300>,
+  "jti": "<engangs, ≤ 128 tegn>",
+  "session": "<sessionens navn>"  // valgfri, 1–80 tegn [A-Za-z0-9._-]
+}
+```
+
+Billetten: `sub` = edgens `agent-<uuid>`, `principal_type: agent`, `edge: "<navn>"`, `session`, `agent_card`.
+
+**`session` er edgens oplysning, ikke et bevis.** Alle sessioner på en maskine kører som samme bruger, så BID står kun inde for at billetten kom fra den registrerede edge. Brug `session` til at vise og logge HVEM der spurgte, ikke til at give adgang.
+
+Afvisninger: `edge_unknown`, `edge_assertion_invalid` (signatur, `aud`, `iss`/`sub`, `jti`, `session`), `edge_assertion_expired`, `edge_assertion_too_long` (exp − iat > 300), `edge_assertion_replayed` (samme `jti` to gange), `agent_not_active` (edgen er slukket), `no_rule_for_audience`.
+
 ## 5. Når det går galt
 
 ```ts

@@ -2,7 +2,7 @@
 
 > **Automatisk kopi — redigér ikke her.** Alt i dette repo genereres fra
 > BID's eget (private) repo ved hver ændring. Rettelser foreslås til
-> BID, ikke som pull requests her. Kopieret fra `broberg-id@d61a2a2`.
+> BID, ikke som pull requests her. Kopieret fra `broberg-id@ce6e348`.
 
 | | |
 |---|---|

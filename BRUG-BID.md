@@ -743,6 +743,37 @@ bruger der står udenfor.
 
 ---
 
+## 5d. Face ID / fingeraftryk i en native app (iOS og Android) — F084.203
+
+En native app (Capacitor, Swift, Kotlin), der logger ind med BID's indlejrede login, kan bruge brugerens EKSISTERENDE adgangsnøgle. Hun bekræfter med Face ID eller fingeraftryk, uden kode på mail. Det er generisk: enhver native klient kan bruge det, når dens apps er registreret i BID.
+
+**1. Få appen registreret i BID** (BID-sessionen gør det; send app-id og fingeraftryk):
+
+```bash
+bun src/native-apps.ts ios     <client_id> <TeamID.bundle>          # fx 7NAG4UJCT9.me.buzzalert.app
+bun src/native-apps.ts android <client_id> <pakke> <SHA-256> [...]  # signeringscertifikatets fingeraftryk, debug OG release
+```
+
+BID serverer så `https://id.broberg.ai/.well-known/apple-app-site-association` og `/.well-known/assetlinks.json` ud fra registreringen. Der er ingen fil med app-navne.
+
+**2. I appen:**
+- iOS: entitlement `com.apple.developer.associated-domains` = `webcredentials:id.broberg.ai`. Apple henter AASA via sit CDN, så en ny registrering kan tage tid om at virke.
+- Android: Credential Manager. `assetlinks.json` skal liste pakke + fingeraftryk for præcis det certifikat, appen er signeret med.
+
+**3. Forløbet** (alle kald med native HTTP, uden Origin-header, ligesom resten af det indlejrede login):
+
+| Trin | Kald | Svar |
+|---|---|---|
+| Start | `POST /embedded/passkey/start` `{client_id, code_challenge, code_challenge_method:"S256", redirect_uri?}` | `{flow_id, expires_in}` |
+| Udfordring | `GET /embedded/passkey/options?flow_id=…` | `{challenge, rpId:"id.broberg.ai", timeout}` |
+| Face ID | Platformens passkey-API med `rpId` + `challenge`, `userVerification: "required"` | en assertion (AuthenticationResponseJSON) |
+| Bekræft | `POST /embedded/passkey/verify` `{flow_id, response}` | `{ok:true}` |
+| Kode | `POST /embedded/passkey/complete` `{flow_id}` | `{next:"done", code}` → `/oauth2/token` med din `code_verifier` |
+
+BID godtager origin `https://id.broberg.ai` (iOS via AASA) og `android:apk-key-hash:…` KUN for fingeraftryk registreret på DIN klient. Udfordringen kan bruges én gang. Brugerverifikation (Face ID) er krævet, og forsøg tælles. Uden registrerede apps svarer start `403 client_not_embedded`.
+
+**Kun login.** At oprette en ny adgangsnøgle fra appen er ikke åbnet. Brugeren opretter den på id.broberg.ai.
+
 ## 6. Log ud
 
 ```ts
